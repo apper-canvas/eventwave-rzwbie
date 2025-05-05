@@ -88,6 +88,7 @@ const Home = () => {
   const TagIcon = getIcon('Tag');
   const FilterIcon = getIcon('Filter');
   const DollarSignIcon = getIcon('DollarSign');
+  const TicketIcon = getIcon('Ticket');
   
   // Filter events based on category and search term
   useEffect(() => {
@@ -191,48 +192,55 @@ const Home = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="event-card group"
+                className="event-card group h-full flex flex-col"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-52 overflow-hidden rounded-t-xl">
                   <img 
                     src={event.image} 
                     alt={event.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
-                      <CalendarIcon size={14} className="mr-1 flex-shrink-0" />
-                      <span>{format(event.date, 'MMM dd, yyyy')}</span>
-                    </div>
-                    <div className="flex items-center text-sm font-medium text-primary">
-                      <DollarSignIcon size={14} className="mr-1 flex-shrink-0" />
-                      <span>{event.price.toFixed(2)}</span>
-                    </div>
+                <div className="p-5 flex-grow flex flex-col">
+                  <div className="flex items-center mb-3">
+                    <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-medium flex items-center">
+                      <TagIcon size={14} className="mr-1.5" />
+                      {event.category}
+                    </span>
+                    <span className="ml-auto text-primary font-semibold flex items-center">
+                      <DollarSignIcon size={16} className="mr-1" />
+                      {event.price.toFixed(2)}
+                    </span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                  
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 line-clamp-1">
                     {event.title}
                   </h3>
-                  <p className="text-surface-600 dark:text-surface-300 text-sm mb-3 line-clamp-2">
+                  
+                  <p className="text-surface-600 dark:text-surface-300 text-sm mb-4 line-clamp-2">
                     {event.description}
                   </p>
-                  <div className="flex flex-wrap gap-y-2 mb-4">
-                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400 mr-4">
-                      <MapPinIcon size={14} className="mr-1 flex-shrink-0" />
-                      <span className="truncate">{event.location}</span>
+                  
+                  <div className="mt-auto space-y-3">
+                    <div className="grid grid-cols-1 gap-2">
+                      <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
+                        <CalendarIcon size={15} className="mr-2 flex-shrink-0 text-surface-400" />
+                        <span>{format(event.date, 'MMM dd, yyyy')}</span>
+                      </div>
+                      <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
+                        <MapPinIcon size={15} className="mr-2 flex-shrink-0 text-surface-400" />
+                        <span className="truncate">{event.location}</span>
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
-                      <TagIcon size={14} className="mr-1 flex-shrink-0" />
-                      <span>{event.category}</span>
-                    </div>
+                    
+                    <button 
+                      onClick={() => handleBookNow(event)}
+                      className="w-full btn-primary py-2.5 transition-all duration-300 hover:shadow-md hover:translate-y-[-2px] active:translate-y-0 flex items-center justify-center"
+                    >
+                      <TicketIcon size={18} className="mr-1.5" />
+                      Book Now
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => handleBookNow(event)}
-                    className="w-full btn-primary transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    Book Now
-                  </button>
                 </div>
               </motion.div>
             ))}

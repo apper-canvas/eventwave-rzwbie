@@ -261,7 +261,7 @@ const Payment = () => {
         isValid = validateWalletForm();
         break;
       default:
-        isValid = true;
+        isValid = false;
     }
     
     if (!isValid) {
@@ -288,6 +288,11 @@ const Payment = () => {
         
         // Update sessionStorage with the payment information
         sessionStorage.setItem('bookingData', JSON.stringify(updatedBookingData));
+        
+        // Show success toast
+        toast.success('Payment successful! Redirecting to confirmation...', {
+          autoClose: 2000
+        });
         
         // Navigate to confirmation page
         navigate('/booking/confirmation');

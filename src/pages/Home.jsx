@@ -119,7 +119,7 @@ const Home = () => {
   };
   
   const handleBookNow = (event) => {
-    navigate(`/event/${event.id}`);
+    navigate(`/events/${event.id}`);
   };
 
   return (

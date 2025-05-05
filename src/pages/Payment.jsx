@@ -693,7 +693,7 @@ const Payment = () => {
                     <div
                       key={bank.id}
                       onClick={() => handleBankSelection(bank.id)}
-                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center ${
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center relative ${
                         netBankingFormData.bank === bank.id
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
@@ -715,7 +715,7 @@ const Payment = () => {
                     <div
                       key={bank.id}
                       onClick={() => handleBankSelection(bank.id)}
-                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center ${
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center relative ${
                         netBankingFormData.bank === bank.id
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'

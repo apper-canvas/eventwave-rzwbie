@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+                      className="w-full btn bg-red-600 hover:bg-red-700 text-white focus:ring-red-600 py-2.5 transition-all duration-300 hover:shadow-md hover:translate-y-[-2px] active:translate-y-0 flex items-center justify-center"
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import getIcon from '../utils/iconUtils';

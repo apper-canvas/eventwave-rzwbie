@@ -221,6 +221,28 @@ const Payment = () => {
     setErrors({});
   };
 
+  const handleBankSelection = (bankId) => {
+    setNetBankingFormData({ ...netBankingFormData, bank: bankId });
+    // Clear any bank selection errors
+    if (errors.bank) {
+      setErrors({
+        ...errors,
+        bank: null
+      });
+    }
+  };
+
+  const handleWalletTypeSelection = (walletType) => {
+    setWalletFormData({ ...walletFormData, walletType });
+    // Clear any wallet-related errors
+    if (errors.walletType) {
+      setErrors({
+        ...errors,
+        walletType: null
+      });
+    }
+  };
+
   const handleSubmitPayment = () => {
     let isValid = false;
     
@@ -675,15 +697,42 @@ const Payment = () => {
                   {banks.slice(0, 4).map(bank => (
                     <div
                       key={bank.id}
-                      onClick={() => setNetBankingFormData({ ...netBankingFormData, bank: bank.id })}
+                      onClick={() => handleBankSelection(bank.id)}
                       className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center ${
                         netBankingFormData.bank === bank.id
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
                       }`}
                     >
-                      <BankIcon size={20} className="mb-1 text-primary" />
-                      <p className="text-xs font-medium">{bank.name.split(' ')[0]}</p>
+                      <BankIcon size={20} className={`mb-1 ${netBankingFormData.bank === bank.id ? 'text-primary' : 'text-surface-600 dark:text-surface-400'}`} />
+                      <p className={`text-xs font-medium ${netBankingFormData.bank === bank.id ? 'text-primary' : ''}`}>{bank.name.split(' ')[0]}</p>
+                      {netBankingFormData.bank === bank.id && (
+                        <div className="absolute top-1 right-1 text-primary">
+                          <CheckIcon size={14} />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {banks.slice(4, 8).map(bank => (
+                    <div
+                      key={bank.id}
+                      onClick={() => handleBankSelection(bank.id)}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center ${
+                        netBankingFormData.bank === bank.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                      }`}
+                    >
+                      <BankIcon size={20} className={`mb-1 ${netBankingFormData.bank === bank.id ? 'text-primary' : 'text-surface-600 dark:text-surface-400'}`} />
+                      <p className={`text-xs font-medium ${netBankingFormData.bank === bank.id ? 'text-primary' : ''}`}>{bank.name.split(' ')[0]}</p>
+                      {netBankingFormData.bank === bank.id && (
+                        <div className="absolute top-1 right-1 text-primary">
+                          <CheckIcon size={14} />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -707,39 +756,54 @@ const Payment = () => {
                   <label className="block text-sm font-medium mb-2">Select Wallet</label>
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     <div
-                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'paytm' })}
-                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                      onClick={() => handleWalletTypeSelection('paytm')}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors relative ${
                         walletFormData.walletType === 'paytm'
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
                       }`}
                     >
                       <WalletIcon size={24} className="mb-1 text-blue-500" />
-                      <p className="text-sm font-medium">Paytm</p>
+                      <p className={`text-sm font-medium ${walletFormData.walletType === 'paytm' ? 'text-primary' : ''}`}>Paytm</p>
+                      {walletFormData.walletType === 'paytm' && (
+                        <div className="absolute top-1 right-1 text-primary">
+                          <CheckIcon size={14} />
+                        </div>
+                      )}
                     </div>
                     
                     <div
-                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'phonepe' })}
-                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                      onClick={() => handleWalletTypeSelection('phonepe')}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors relative ${
                         walletFormData.walletType === 'phonepe'
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
                       }`}
                     >
                       <WalletIcon size={24} className="mb-1 text-purple-500" />
-                      <p className="text-sm font-medium">PhonePe</p>
+                      <p className={`text-sm font-medium ${walletFormData.walletType === 'phonepe' ? 'text-primary' : ''}`}>PhonePe</p>
+                      {walletFormData.walletType === 'phonepe' && (
+                        <div className="absolute top-1 right-1 text-primary">
+                          <CheckIcon size={14} />
+                        </div>
+                      )}
                     </div>
                     
                     <div
-                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'googlepay' })}
-                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                      onClick={() => handleWalletTypeSelection('googlepay')}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors relative ${
                         walletFormData.walletType === 'googlepay'
                           ? 'border-primary bg-primary/5'
                           : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
                       }`}
                     >
                       <WalletIcon size={24} className="mb-1 text-green-500" />
-                      <p className="text-sm font-medium">Google Pay</p>
+                      <p className={`text-sm font-medium ${walletFormData.walletType === 'googlepay' ? 'text-primary' : ''}`}>Google Pay</p>
+                      {walletFormData.walletType === 'googlepay' && (
+                        <div className="absolute top-1 right-1 text-primary">
+                          <CheckIcon size={14} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

@@ -87,6 +87,7 @@ const Home = () => {
   const MapPinIcon = getIcon('MapPin');
   const TagIcon = getIcon('Tag');
   const FilterIcon = getIcon('Filter');
+  const DollarSignIcon = getIcon('DollarSign');
   
   // Filter events based on category and search term
   useEffect(() => {
@@ -198,34 +199,37 @@ const Home = () => {
                     alt={event.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-3 right-3 bg-primary text-white px-2 py-1 rounded-lg text-sm font-medium">
-                    ${event.price.toFixed(2)}
-                  </div>
                 </div>
                 <div className="p-5">
-                  <div className="flex items-center text-sm text-surface-500 dark:text-surface-400 mb-2">
-                    <div className="flex items-center mr-3">
-                      <CalendarIcon size={14} className="mr-1" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
+                      <CalendarIcon size={14} className="mr-1 flex-shrink-0" />
                       <span>{format(event.date, 'MMM dd, yyyy')}</span>
                     </div>
-                    <div className="flex items-center">
-                      <TagIcon size={14} className="mr-1" />
-                      <span>{event.category}</span>
+                    <div className="flex items-center text-sm font-medium text-primary">
+                      <DollarSignIcon size={14} className="mr-1 flex-shrink-0" />
+                      <span>{event.price.toFixed(2)}</span>
                     </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                  <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors line-clamp-1">
                     {event.title}
                   </h3>
                   <p className="text-surface-600 dark:text-surface-300 text-sm mb-3 line-clamp-2">
                     {event.description}
                   </p>
-                  <div className="flex items-center text-sm text-surface-500 dark:text-surface-400 mb-4">
-                    <MapPinIcon size={14} className="mr-1" />
-                    <span>{event.location}</span>
+                  <div className="flex flex-wrap gap-y-2 mb-4">
+                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400 mr-4">
+                      <MapPinIcon size={14} className="mr-1 flex-shrink-0" />
+                      <span className="truncate">{event.location}</span>
+                    </div>
+                    <div className="flex items-center text-sm text-surface-500 dark:text-surface-400">
+                      <TagIcon size={14} className="mr-1 flex-shrink-0" />
+                      <span>{event.category}</span>
+                    </div>
                   </div>
                   <button 
                     onClick={() => handleBookNow(event)}
-                    className="w-full btn-primary"
+                    className="w-full btn-primary transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Book Now
                   </button>

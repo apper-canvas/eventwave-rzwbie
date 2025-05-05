@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg py-3 text-center transition-colors"
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import getIcon from '../utils/iconUtils';

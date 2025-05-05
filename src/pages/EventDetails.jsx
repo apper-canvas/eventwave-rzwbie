@@ -189,12 +189,27 @@ const EventDetails = () => {
       return;
     }
 
-    toast.success("Booking successful! Your tickets are confirmed.");
+    // Create booking data object
+    const bookingData = {
+      eventId: event.id,
+      eventTitle: event.title,
+      eventDate: event.date,
+      eventLocation: event.location,
+      eventImage: event.image,
+      ticketType: selectedTicket.name,
+      ticketPrice: selectedTicket.price,
+      quantity: quantity,
+      totalPrice: selectedTicket.price * quantity,
+      bookingId: 'BK' + Date.now().toString().slice(-8),
+      bookingDate: new Date(),
+    };
+
+    // In a real app, you would submit this to an API
+    // For now, we'll save it to sessionStorage for the confirmation page
+    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
     
-    // In a real app, you would:
-    // 1. Submit booking to an API
-    // 2. Process payment
-    // 3. Navigate to a confirmation page
+    // Navigate to confirmation page
+    navigate(`/booking/confirmation`);
   };
 
   const handleGoBack = () => {

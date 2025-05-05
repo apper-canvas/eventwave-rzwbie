@@ -12,14 +12,42 @@ const Payment = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('creditCard');
   
-  // Form state
-  const [formData, setFormData] = useState({
+  // Form state for credit card
+  const [cardFormData, setCardFormData] = useState({
     cardNumber: '',
     cardholderName: '',
     expiryDate: '',
     cvv: '',
     saveCard: false
   });
+  
+  // Form state for UPI
+  const [upiFormData, setUpiFormData] = useState({
+    upiId: ''
+  });
+  
+  // Form state for net banking
+  const [netBankingFormData, setNetBankingFormData] = useState({
+    bank: ''
+  });
+  
+  // Form state for wallets
+  const [walletFormData, setWalletFormData] = useState({
+    walletType: 'paytm',
+    mobileNumber: ''
+  });
+  
+  // Banks list for net banking
+  const banks = [
+    { id: 'sbi', name: 'State Bank of India' },
+    { id: 'hdfc', name: 'HDFC Bank' },
+    { id: 'icici', name: 'ICICI Bank' },
+    { id: 'axis', name: 'Axis Bank' },
+    { id: 'kotak', name: 'Kotak Mahindra Bank' },
+    { id: 'pnb', name: 'Punjab National Bank' },
+    { id: 'yes', name: 'Yes Bank' },
+    { id: 'bob', name: 'Bank of Baroda' }
+  ];
   
   // Form errors
   const [errors, setErrors] = useState({});
@@ -31,11 +59,13 @@ const Payment = () => {
   const ArrowLeftIcon = getIcon('ArrowLeft');
   const CreditCardIcon = getIcon('CreditCard');
   const LockIcon = getIcon('Lock');
-  const PaypalIcon = getIcon('Paypal');
   const BankIcon = getIcon('Building');
   const WalletIcon = getIcon('Wallet');
   const CheckIcon = getIcon('Check');
-  const XIcon = getIcon('X');
+  const SmartphoneIcon = getIcon('Smartphone');
+  const UserIcon = getIcon('User');
+  const ShieldIcon = getIcon('Shield');
+  const AlertCircleIcon = getIcon('AlertCircle');
 
   useEffect(() => {
     // Retrieve booking data from sessionStorage
@@ -52,10 +82,10 @@ const Payment = () => {
     setLoading(false);
   }, [navigate]);
 
-  const handleInputChange = (e) => {
+  const handleCardInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setCardFormData({
+      ...cardFormData,
       [name]: type === 'checkbox' ? checked : value
     });
     
@@ -68,30 +98,118 @@ const Payment = () => {
     }
   };
 
-  const validateForm = () => {
+  const handleUpiInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpiFormData({
+      ...upiFormData,
+      [name]: value
+    });
+    
+    // Clear errors when user types
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
+    }
+  };
+
+  const handleNetBankingInputChange = (e) => {
+    const { name, value } = e.target;
+    setNetBankingFormData({
+      ...netBankingFormData,
+      [name]: value
+    });
+    
+    // Clear errors when user types
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
+    }
+  };
+
+  const handleWalletInputChange = (e) => {
+    const { name, value } = e.target;
+    setWalletFormData({
+      ...walletFormData,
+      [name]: value
+    });
+    
+    // Clear errors when user types
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: null
+      });
+    }
+  };
+
+  const validateCardForm = () => {
     const newErrors = {};
     
-    // Basic validation
-    if (!formData.cardNumber.trim()) {
+    // Basic validation for credit card
+    if (!cardFormData.cardNumber.trim()) {
       newErrors.cardNumber = 'Card number is required';
-    } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ''))) {
+    } else if (!/^\d{16}$/.test(cardFormData.cardNumber.replace(/\s/g, ''))) {
       newErrors.cardNumber = 'Invalid card number';
     }
     
-    if (!formData.cardholderName.trim()) {
+    if (!cardFormData.cardholderName.trim()) {
       newErrors.cardholderName = 'Cardholder name is required';
     }
     
-    if (!formData.expiryDate.trim()) {
+    if (!cardFormData.expiryDate.trim()) {
       newErrors.expiryDate = 'Expiry date is required';
-    } else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
+    } else if (!/^\d{2}\/\d{2}$/.test(cardFormData.expiryDate)) {
       newErrors.expiryDate = 'Use format MM/YY';
     }
     
-    if (!formData.cvv.trim()) {
+    if (!cardFormData.cvv.trim()) {
       newErrors.cvv = 'CVV is required';
-    } else if (!/^\d{3,4}$/.test(formData.cvv)) {
+    } else if (!/^\d{3,4}$/.test(cardFormData.cvv)) {
       newErrors.cvv = 'Invalid CVV';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateUpiForm = () => {
+    const newErrors = {};
+    
+    // UPI ID validation
+    if (!upiFormData.upiId.trim()) {
+      newErrors.upiId = 'UPI ID is required';
+    } else if (!/^[a-zA-Z0-9.\-_]{2,49}@[a-zA-Z]{2,}$/.test(upiFormData.upiId)) {
+      newErrors.upiId = 'Invalid UPI ID format';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateNetBankingForm = () => {
+    const newErrors = {};
+    
+    // Bank selection validation
+    if (!netBankingFormData.bank) {
+      newErrors.bank = 'Please select a bank';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateWalletForm = () => {
+    const newErrors = {};
+    
+    // Mobile number validation for wallet
+    if (!walletFormData.mobileNumber.trim()) {
+      newErrors.mobileNumber = 'Mobile number is required';
+    } else if (!/^\d{10}$/.test(walletFormData.mobileNumber)) {
+      newErrors.mobileNumber = 'Invalid mobile number';
     }
     
     setErrors(newErrors);
@@ -100,10 +218,31 @@ const Payment = () => {
 
   const handlePaymentMethodChange = (method) => {
     setSelectedPaymentMethod(method);
+    setErrors({});
   };
 
   const handleSubmitPayment = () => {
-    if (selectedPaymentMethod === 'creditCard' && !validateForm()) {
+    let isValid = false;
+    
+    // Validate form based on selected payment method
+    switch (selectedPaymentMethod) {
+      case 'creditCard':
+        isValid = validateCardForm();
+        break;
+      case 'upi':
+        isValid = validateUpiForm();
+        break;
+      case 'netBanking':
+        isValid = validateNetBankingForm();
+        break;
+      case 'wallet':
+        isValid = validateWalletForm();
+        break;
+      default:
+        isValid = true;
+    }
+    
+    if (!isValid) {
       toast.error('Please correct the errors in the form');
       return;
     }
@@ -121,7 +260,8 @@ const Payment = () => {
           ...bookingData,
           paymentStatus: 'Paid',
           paymentDate: new Date(),
-          paymentMethod: selectedPaymentMethod
+          paymentMethod: selectedPaymentMethod,
+          paymentDetails: getPaymentDetails()
         };
         
         // Update sessionStorage with the payment information
@@ -137,6 +277,50 @@ const Payment = () => {
         });
       }
     }, 2000);
+  };
+  
+  const getPaymentDetails = () => {
+    switch (selectedPaymentMethod) {
+      case 'creditCard':
+        return {
+          type: 'Credit/Debit Card',
+          last4: cardFormData.cardNumber.slice(-4),
+          cardholderName: cardFormData.cardholderName
+        };
+      case 'upi':
+        return {
+          type: 'UPI',
+          upiId: upiFormData.upiId
+        };
+      case 'netBanking':
+        return {
+          type: 'Net Banking',
+          bankName: banks.find(bank => bank.id === netBankingFormData.bank)?.name || 'Selected Bank'
+        };
+      case 'wallet':
+        return {
+          type: 'Digital Wallet',
+          walletName: getWalletName(walletFormData.walletType),
+          mobileNumber: walletFormData.mobileNumber
+        };
+      default:
+        return {
+          type: 'Unknown Payment Method'
+        };
+    }
+  };
+  
+  const getWalletName = (type) => {
+    switch (type) {
+      case 'paytm':
+        return 'Paytm';
+      case 'phonepe':
+        return 'PhonePe';
+      case 'googlepay':
+        return 'Google Pay';
+      default:
+        return 'Digital Wallet';
+    }
   };
 
   const handleGoBack = () => {
@@ -204,7 +388,7 @@ const Payment = () => {
                   <CreditCardIcon size={24} />
                 </div>
                 <div>
-                  <h3 className="font-medium">Credit Card</h3>
+                  <h3 className="font-medium">Credit/Debit Card</h3>
                   <p className="text-xs text-surface-500 dark:text-surface-400">Visa, Mastercard, Amex</p>
                 </div>
                 {selectedPaymentMethod === 'creditCard' && (
@@ -215,21 +399,65 @@ const Payment = () => {
               </div>
               
               <div 
-                onClick={() => handlePaymentMethodChange('paypal')}
+                onClick={() => handlePaymentMethodChange('upi')}
                 className={`border rounded-lg p-4 flex items-center cursor-pointer transition-colors ${
-                  selectedPaymentMethod === 'paypal' 
+                  selectedPaymentMethod === 'upi' 
                     ? 'border-primary bg-primary/5' 
                     : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
                 }`}
               >
                 <div className="mr-3 text-primary">
-                  <PaypalIcon size={24} />
+                  <SmartphoneIcon size={24} />
                 </div>
                 <div>
-                  <h3 className="font-medium">PayPal</h3>
-                  <p className="text-xs text-surface-500 dark:text-surface-400">Pay with your PayPal account</p>
+                  <h3 className="font-medium">UPI</h3>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Google Pay, PhonePe, BHIM</p>
                 </div>
-                {selectedPaymentMethod === 'paypal' && (
+                {selectedPaymentMethod === 'upi' && (
+                  <div className="ml-auto text-primary">
+                    <CheckIcon size={18} />
+                  </div>
+                )}
+              </div>
+              
+              <div 
+                onClick={() => handlePaymentMethodChange('netBanking')}
+                className={`border rounded-lg p-4 flex items-center cursor-pointer transition-colors ${
+                  selectedPaymentMethod === 'netBanking' 
+                    ? 'border-primary bg-primary/5' 
+                    : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                }`}
+              >
+                <div className="mr-3 text-primary">
+                  <BankIcon size={24} />
+                </div>
+                <div>
+                  <h3 className="font-medium">Net Banking</h3>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">All major banks supported</p>
+                </div>
+                {selectedPaymentMethod === 'netBanking' && (
+                  <div className="ml-auto text-primary">
+                    <CheckIcon size={18} />
+                  </div>
+                )}
+              </div>
+              
+              <div 
+                onClick={() => handlePaymentMethodChange('wallet')}
+                className={`border rounded-lg p-4 flex items-center cursor-pointer transition-colors ${
+                  selectedPaymentMethod === 'wallet' 
+                    ? 'border-primary bg-primary/5' 
+                    : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                }`}
+              >
+                <div className="mr-3 text-primary">
+                  <WalletIcon size={24} />
+                </div>
+                <div>
+                  <h3 className="font-medium">Digital Wallets</h3>
+                  <p className="text-xs text-surface-500 dark:text-surface-400">Paytm, PhonePe, Google Pay</p>
+                </div>
+                {selectedPaymentMethod === 'wallet' && (
                   <div className="ml-auto text-primary">
                     <CheckIcon size={18} />
                   </div>
@@ -237,46 +465,59 @@ const Payment = () => {
               </div>
             </div>
             
+            {/* Credit/Debit Card Form */}
             {selectedPaymentMethod === 'creditCard' && (
               <div className="space-y-4">
                 <div>
                   <label htmlFor="cardNumber" className="block text-sm font-medium mb-1">Card Number</label>
-                  <input
-                    type="text"
-                    id="cardNumber"
-                    name="cardNumber"
-                    placeholder="1234 5678 9012 3456"
-                    className={`w-full px-4 py-2 rounded-lg border ${
-                      errors.cardNumber 
-                        ? 'border-red-500 dark:border-red-500' 
-                        : 'border-surface-200 dark:border-surface-700'
-                    } bg-white dark:bg-surface-900`}
-                    value={formData.cardNumber}
-                    onChange={handleInputChange}
-                    maxLength={19}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="cardNumber"
+                      name="cardNumber"
+                      placeholder="1234 5678 9012 3456"
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.cardNumber 
+                          ? 'border-red-500 dark:border-red-500' 
+                          : 'border-surface-200 dark:border-surface-700'
+                      } bg-white dark:bg-surface-900 pl-10`}
+                      value={cardFormData.cardNumber}
+                      onChange={handleCardInputChange}
+                      maxLength={19}
+                    />
+                    <CreditCardIcon size={16} className="absolute left-3 top-3 text-surface-400" />
+                  </div>
                   {errors.cardNumber && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cardNumber}</p>
+                    <p className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircleIcon size={12} className="mr-1" />
+                      {errors.cardNumber}
+                    </p>
                   )}
                 </div>
                 
                 <div>
                   <label htmlFor="cardholderName" className="block text-sm font-medium mb-1">Cardholder Name</label>
-                  <input
-                    type="text"
-                    id="cardholderName"
-                    name="cardholderName"
-                    placeholder="John Smith"
-                    className={`w-full px-4 py-2 rounded-lg border ${
-                      errors.cardholderName 
-                        ? 'border-red-500 dark:border-red-500' 
-                        : 'border-surface-200 dark:border-surface-700'
-                    } bg-white dark:bg-surface-900`}
-                    value={formData.cardholderName}
-                    onChange={handleInputChange}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="cardholderName"
+                      name="cardholderName"
+                      placeholder="John Smith"
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.cardholderName 
+                          ? 'border-red-500 dark:border-red-500' 
+                          : 'border-surface-200 dark:border-surface-700'
+                      } bg-white dark:bg-surface-900 pl-10`}
+                      value={cardFormData.cardholderName}
+                      onChange={handleCardInputChange}
+                    />
+                    <UserIcon size={16} className="absolute left-3 top-3 text-surface-400" />
+                  </div>
                   {errors.cardholderName && (
-                    <p className="text-red-500 text-xs mt-1">{errors.cardholderName}</p>
+                    <p className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircleIcon size={12} className="mr-1" />
+                      {errors.cardholderName}
+                    </p>
                   )}
                 </div>
                 
@@ -293,33 +534,47 @@ const Payment = () => {
                           ? 'border-red-500 dark:border-red-500' 
                           : 'border-surface-200 dark:border-surface-700'
                       } bg-white dark:bg-surface-900`}
-                      value={formData.expiryDate}
-                      onChange={handleInputChange}
+                      value={cardFormData.expiryDate}
+                      onChange={handleCardInputChange}
                       maxLength={5}
                     />
                     {errors.expiryDate && (
-                      <p className="text-red-500 text-xs mt-1">{errors.expiryDate}</p>
+                      <p className="text-red-500 text-xs mt-1 flex items-center">
+                        <AlertCircleIcon size={12} className="mr-1" />
+                        {errors.expiryDate}
+                      </p>
                     )}
                   </div>
                   
                   <div>
                     <label htmlFor="cvv" className="block text-sm font-medium mb-1">CVV</label>
-                    <input
-                      type="text"
-                      id="cvv"
-                      name="cvv"
-                      placeholder="123"
-                      className={`w-full px-4 py-2 rounded-lg border ${
-                        errors.cvv 
-                          ? 'border-red-500 dark:border-red-500' 
-                          : 'border-surface-200 dark:border-surface-700'
-                      } bg-white dark:bg-surface-900`}
-                      value={formData.cvv}
-                      onChange={handleInputChange}
-                      maxLength={4}
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="cvv"
+                        name="cvv"
+                        placeholder="123"
+                        className={`w-full px-4 py-2 rounded-lg border ${
+                          errors.cvv 
+                            ? 'border-red-500 dark:border-red-500' 
+                            : 'border-surface-200 dark:border-surface-700'
+                        } bg-white dark:bg-surface-900`}
+                        value={cardFormData.cvv}
+                        onChange={handleCardInputChange}
+                        maxLength={4}
+                      />
+                      <div className="absolute right-3 top-2 cursor-help group">
+                        <ShieldIcon size={16} className="text-surface-400" />
+                        <div className="hidden group-hover:block absolute right-0 bottom-full mb-2 bg-surface-900 text-white text-xs p-2 rounded shadow-lg w-48">
+                          The CVV is the 3 or 4 digit code on the back of your card
+                        </div>
+                      </div>
+                    </div>
                     {errors.cvv && (
-                      <p className="text-red-500 text-xs mt-1">{errors.cvv}</p>
+                      <p className="text-red-500 text-xs mt-1 flex items-center">
+                        <AlertCircleIcon size={12} className="mr-1" />
+                        {errors.cvv}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -329,8 +584,8 @@ const Payment = () => {
                     type="checkbox"
                     id="saveCard"
                     name="saveCard"
-                    checked={formData.saveCard}
-                    onChange={handleInputChange}
+                    checked={cardFormData.saveCard}
+                    onChange={handleCardInputChange}
                     className="w-4 h-4 text-primary border-surface-300 rounded focus:ring-primary"
                   />
                   <label htmlFor="saveCard" className="ml-2 text-sm text-surface-700 dark:text-surface-300">
@@ -340,14 +595,194 @@ const Payment = () => {
               </div>
             )}
             
-            {selectedPaymentMethod === 'paypal' && (
-              <div className="text-center p-6">
-                <div className="mb-4 text-primary">
-                  <PaypalIcon size={60} />
+            {/* UPI Form */}
+            {selectedPaymentMethod === 'upi' && (
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="upiId" className="block text-sm font-medium mb-1">UPI ID</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="upiId"
+                      name="upiId"
+                      placeholder="yourname@upi"
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.upiId 
+                          ? 'border-red-500 dark:border-red-500' 
+                          : 'border-surface-200 dark:border-surface-700'
+                      } bg-white dark:bg-surface-900 pl-10`}
+                      value={upiFormData.upiId}
+                      onChange={handleUpiInputChange}
+                    />
+                    <SmartphoneIcon size={16} className="absolute left-3 top-3 text-surface-400" />
+                  </div>
+                  {errors.upiId && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircleIcon size={12} className="mr-1" />
+                      {errors.upiId}
+                    </p>
+                  )}
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">
+                    Enter your UPI ID (e.g., yourname@okbank, mobilenumber@upi)
+                  </p>
                 </div>
-                <p className="mb-4 text-surface-600 dark:text-surface-300">
-                  Click "Complete Payment" to be redirected to PayPal to complete your purchase securely.
-                </p>
+                
+                <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg mt-4">
+                  <div className="flex items-center mb-2">
+                    <ShieldIcon size={16} className="text-green-500 mr-2" />
+                    <span className="text-sm font-medium">How UPI Payment Works</span>
+                  </div>
+                  <ol className="list-decimal list-inside text-xs text-surface-600 dark:text-surface-300 space-y-1 pl-5">
+                    <li>Enter your UPI ID and click "Complete Payment"</li>
+                    <li>You'll receive a payment request notification on your UPI app</li>
+                    <li>Approve the payment in your UPI app</li>
+                    <li>Return to this page to complete your booking</li>
+                  </ol>
+                </div>
+              </div>
+            )}
+            
+            {/* Net Banking Form */}
+            {selectedPaymentMethod === 'netBanking' && (
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="bank" className="block text-sm font-medium mb-1">Select Bank</label>
+                  <select
+                    id="bank"
+                    name="bank"
+                    className={`w-full px-4 py-2 rounded-lg border ${
+                      errors.bank 
+                        ? 'border-red-500 dark:border-red-500' 
+                        : 'border-surface-200 dark:border-surface-700'
+                    } bg-white dark:bg-surface-900`}
+                    value={netBankingFormData.bank}
+                    onChange={handleNetBankingInputChange}
+                  >
+                    <option value="">Select your bank</option>
+                    {banks.map(bank => (
+                      <option key={bank.id} value={bank.id}>{bank.name}</option>
+                    ))}
+                  </select>
+                  {errors.bank && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircleIcon size={12} className="mr-1" />
+                      {errors.bank}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {banks.slice(0, 4).map(bank => (
+                    <div
+                      key={bank.id}
+                      onClick={() => setNetBankingFormData({ ...netBankingFormData, bank: bank.id })}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors text-center ${
+                        netBankingFormData.bank === bank.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                      }`}
+                    >
+                      <BankIcon size={20} className="mb-1 text-primary" />
+                      <p className="text-xs font-medium">{bank.name.split(' ')[0]}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg mt-4">
+                  <div className="flex items-center mb-2">
+                    <ShieldIcon size={16} className="text-green-500 mr-2" />
+                    <span className="text-sm font-medium">Secure Banking Process</span>
+                  </div>
+                  <p className="text-xs text-surface-600 dark:text-surface-300">
+                    After clicking "Complete Payment", you'll be redirected to your bank's secure login page to authorize the payment.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {/* Digital Wallet Form */}
+            {selectedPaymentMethod === 'wallet' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Select Wallet</label>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div
+                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'paytm' })}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                        walletFormData.walletType === 'paytm'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                      }`}
+                    >
+                      <WalletIcon size={24} className="mb-1 text-blue-500" />
+                      <p className="text-sm font-medium">Paytm</p>
+                    </div>
+                    
+                    <div
+                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'phonepe' })}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                        walletFormData.walletType === 'phonepe'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                      }`}
+                    >
+                      <WalletIcon size={24} className="mb-1 text-purple-500" />
+                      <p className="text-sm font-medium">PhonePe</p>
+                    </div>
+                    
+                    <div
+                      onClick={() => setWalletFormData({ ...walletFormData, walletType: 'googlepay' })}
+                      className={`border rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                        walletFormData.walletType === 'googlepay'
+                          ? 'border-primary bg-primary/5'
+                          : 'border-surface-200 dark:border-surface-700 hover:border-primary/50'
+                      }`}
+                    >
+                      <WalletIcon size={24} className="mb-1 text-green-500" />
+                      <p className="text-sm font-medium">Google Pay</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="mobileNumber" className="block text-sm font-medium mb-1">Mobile Number</label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="mobileNumber"
+                      name="mobileNumber"
+                      placeholder="10-digit mobile number"
+                      className={`w-full px-4 py-2 rounded-lg border ${
+                        errors.mobileNumber 
+                          ? 'border-red-500 dark:border-red-500' 
+                          : 'border-surface-200 dark:border-surface-700'
+                      } bg-white dark:bg-surface-900 pl-10`}
+                      value={walletFormData.mobileNumber}
+                      onChange={handleWalletInputChange}
+                      maxLength={10}
+                    />
+                    <SmartphoneIcon size={16} className="absolute left-3 top-3 text-surface-400" />
+                  </div>
+                  {errors.mobileNumber && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center">
+                      <AlertCircleIcon size={12} className="mr-1" />
+                      {errors.mobileNumber}
+                    </p>
+                  )}
+                  <p className="text-xs text-surface-500 dark:text-surface-400 mt-2">
+                    Enter the mobile number linked to your {getWalletName(walletFormData.walletType)} account
+                  </p>
+                </div>
+                
+                <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg mt-4">
+                  <div className="flex items-center mb-2">
+                    <ShieldIcon size={16} className="text-green-500 mr-2" />
+                    <span className="text-sm font-medium">Secure Wallet Process</span>
+                  </div>
+                  <p className="text-xs text-surface-600 dark:text-surface-300">
+                    After clicking "Complete Payment", you'll receive a payment request notification on your wallet app. Approve the payment to complete your booking.
+                  </p>
+                </div>
               </div>
             )}
             
@@ -371,9 +806,17 @@ const Payment = () => {
               </button>
             </div>
             
-            <div className="mt-4 text-center text-xs text-surface-500 dark:text-surface-400 flex items-center justify-center">
-              <LockIcon size={12} className="mr-1" /> 
-              Secure payment processed using encryption
+            <div className="mt-4 flex flex-col items-center justify-center space-y-2">
+              <div className="flex items-center text-xs text-surface-500 dark:text-surface-400">
+                <LockIcon size={12} className="mr-1" /> 
+                Secure payment processed using 256-bit encryption
+              </div>
+              <div className="flex space-x-2">
+                <div className="w-8 h-5 bg-surface-200 dark:bg-surface-700 rounded"></div>
+                <div className="w-8 h-5 bg-surface-200 dark:bg-surface-700 rounded"></div>
+                <div className="w-8 h-5 bg-surface-200 dark:bg-surface-700 rounded"></div>
+                <div className="w-8 h-5 bg-surface-200 dark:bg-surface-700 rounded"></div>
+              </div>
             </div>
           </div>
         </motion.div>

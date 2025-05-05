@@ -205,11 +205,11 @@ const EventDetails = () => {
     };
 
     // In a real app, you would submit this to an API
-    // For now, we'll save it to sessionStorage for the confirmation page
+    // For now, we'll save it to sessionStorage for the payment page
     sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
     
-    // Navigate to confirmation page
-    navigate(`/booking/confirmation`);
+    // Navigate to payment page instead of confirmation
+    navigate('/payment');
   };
 
   const handleGoBack = () => {
@@ -411,7 +411,7 @@ const EventDetails = () => {
               onClick={handleBooking}
               className="w-full btn-primary py-3 text-center"
             >
-              Complete Booking
+              Proceed to Payment
             </button>
             
             <p className="text-xs text-surface-500 dark:text-surface-400 text-center mt-4">

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
@@ -9,7 +9,7 @@ import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <Router>
+    <>
       <div className="min-h-screen bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white pt-4 md:pt-8 pb-20">
         <div className="container px-4 mx-auto">
           <Routes>
@@ -22,7 +22,7 @@ function App() {
         </div>
       </div>
       <ToastContainer position="top-right" autoClose={5000} />
-    </Router>
+    </>
   );
 }
 

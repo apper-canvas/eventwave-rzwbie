@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import getIcon from '../utils/iconUtils';
 import MainFeature from '../components/MainFeature';
-import { toast } from 'react-toastify';
 
 // Sample events data
 const EVENTS_DATA = [
@@ -75,6 +75,7 @@ const CATEGORIES = [
 ];
 
 const Home = () => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState(EVENTS_DATA);
   const [filteredEvents, setFilteredEvents] = useState(EVENTS_DATA);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -118,7 +119,7 @@ const Home = () => {
   };
   
   const handleBookNow = (event) => {
-    toast.success(`You've selected "${event.title}" - Continue to booking!`);
+    navigate(`/event/${event.id}`);
   };
 
   return (

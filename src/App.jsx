@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Home from './pages/Home';
+import EventDetails from './pages/EventDetails';
 import NotFound from './pages/NotFound';
 import getIcon from './utils/iconUtils';
 
@@ -50,6 +51,7 @@ function App() {
       <main className="container mx-auto px-4 py-6">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/event/:eventId" element={<EventDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

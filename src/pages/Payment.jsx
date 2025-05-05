@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import getIcon from '../utils/iconUtils';
 
@@ -265,7 +264,6 @@ const Payment = () => {
     }
     
     if (!isValid) {
-      toast.error('Please correct the errors in the form');
       return;
     }
     
@@ -289,19 +287,11 @@ const Payment = () => {
         // Update sessionStorage with the payment information
         sessionStorage.setItem('bookingData', JSON.stringify(updatedBookingData));
         
-        // Show success toast
-        toast.success('Payment successful! Redirecting to confirmation...', {
-          autoClose: 2000
-        });
-        
         // Navigate to confirmation page
         navigate('/booking/confirmation');
       } else {
         // Payment failed
         setProcessingPayment(false);
-        toast.error('Payment failed. Please try again or use a different payment method.', {
-          autoClose: 5000
-        });
       }
     }, 2000);
   };
